@@ -15,4 +15,16 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="从UI线程发送" />
+
+    <Button
+        android:id="@+id/button_three"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="给SecondActivity发送数据" />
+
+    <Button
+        android:id="@+id/button_four"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="打开SecondActivity" />
 </LinearLayout>

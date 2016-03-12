@@ -1,6 +1,7 @@
 package com.carlos.eventmailer;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,7 +20,7 @@ import com.carlos.eventlibrary.IEventReceiver;
  */
 public class FragmentFirst extends Fragment implements IEventReceiver, View.OnClickListener {
     private View rootView;
-    private Button buttonOne, buttonTwo;
+    private Button buttonOne, buttonTwo, buttonThree, buttonFour;
 
     @Nullable
     @Override
@@ -27,8 +28,12 @@ public class FragmentFirst extends Fragment implements IEventReceiver, View.OnCl
         rootView = inflater.inflate(R.layout.fragment_first, container, false);
         buttonOne = (Button) rootView.findViewById(R.id.button_one);
         buttonTwo = (Button) rootView.findViewById(R.id.button_two);
+        buttonThree = (Button) rootView.findViewById(R.id.button_three);
+        buttonFour = (Button) rootView.findViewById(R.id.button_four);
         buttonTwo.setOnClickListener(this);
         buttonOne.setOnClickListener(this);
+        buttonThree.setOnClickListener(this);
+        buttonFour.setOnClickListener(this);
         EventMailer.getInstance().register(this);
         return rootView;
     }
@@ -56,6 +61,16 @@ public class FragmentFirst extends Fragment implements IEventReceiver, View.OnCl
                 evnetMail2.setAddress_className(FragmentSecond.class.getName());
                 evnetMail2.putData(FragmentSecond.class.getName(), "这个是从UI线程发送");
                 EventMailer.getInstance().sendMail(evnetMail2);
+                break;
+            case R.id.button_three:
+                EventMail eventMail = new EventMail();
+                eventMail.setAddress_className(SecondActivity.class.getName());
+                eventMail.putData(SecondActivity.class.getName(), "hello，发自FragmentFirst");
+                EventMailer.getInstance().sendMail(eventMail);
+                break;
+            case R.id.button_four:
+                Intent intent = new Intent(getActivity(), SecondActivity.class);
+                getActivity().startActivity(intent);
                 break;
         }
     }
