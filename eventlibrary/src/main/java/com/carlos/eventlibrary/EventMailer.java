@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
-import java.lang.ref.WeakReference;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class EventMailer {
     private static EventMailer missileMailer;
-    private Map<String, WeakReference<IEventReceiver>> weakList;
+    private Map<String, SoftReference<IEventReceiver>> softList;
     private static MyHandler myHandler;
     private static Queue<EventMail> mails;
     private static boolean isHold;
@@ -29,7 +29,7 @@ public class EventMailer {
      * 私有构造方法
      */
     private EventMailer() {
-        weakList = Collections.synchronizedMap(new HashMap<String, WeakReference<IEventReceiver>>());
+        softList = Collections.synchronizedMap(new HashMap<String, SoftReference<IEventReceiver>>());
     }
 
     /**
@@ -71,8 +71,8 @@ public class EventMailer {
         if (missileMailer == null) {
             throw new EventMailerException("没有初使化EventMailer");
         }
-        WeakReference<IEventReceiver> iReceiverWeakReference = new WeakReference<>(iReceiver);
-        weakList.put(iReceiver.getClass().getName(), iReceiverWeakReference);
+        SoftReference<IEventReceiver> iReceiverWeakReference = new SoftReference<>(iReceiver);
+        softList.put(iReceiver.getClass().getName(), iReceiverWeakReference);
     }
 
     /**
@@ -82,8 +82,8 @@ public class EventMailer {
      */
     public synchronized void unregisterReceiver(IEventReceiver iReceiver) {
         if (missileMailer == null) throw new EventMailerException("没有初使化EventMailer");
-        if (weakList != null && weakList.containsKey(iReceiver.getClass().getName())) {
-            weakList.remove(iReceiver.getClass().getName());
+        if (softList != null && softList.containsKey(iReceiver.getClass().getName())) {
+            softList.remove(iReceiver.getClass().getName());
         }
     }
 
@@ -140,22 +140,33 @@ public class EventMailer {
         if (missileMailer == null) throw new EventMailerException("你没有初使化，初使化以后才可以发送EventMail");
         if (!isHold) return;
         if (eventMailList == null) return;
+        List<EventMail> eventMails = null;
         for (EventMail eventMail : eventMailList) {
             if (eventMail.getAddress_className().equals(address_className)) {
-                System.out.println("这里有一封");
+                if (eventMails == null) {
+                    eventMails = new ArrayList<>();
+                }
                 sendMail(eventMail);
+                eventMails.add(eventMail);
             }
         }
+        if (eventMails != null) eventMailList.removeAll(eventMails);
     }
 
     private synchronized boolean sendAction(EventMail mail) {
         if (mail.getAddress_className() == null) {
             throw new EventMailerException("请注明要发送给谁，className不能为空");
         }
-        if (weakList != null) {
-            if (weakList.containsKey(mail.getAddress_className())) {
-                IEventReceiver receiver = weakList.get(mail.getAddress_className()).get();
-                receiver.MailBox(mail);
+        if (softList != null) {
+            if (softList.containsKey(mail.getAddress_className())) {
+                IEventReceiver receiver = softList.get(mail.getAddress_className()).get();
+                if (receiver == null) {
+                    if (isHold) {
+                        eventMailList.add(mail);
+                    }
+                } else {
+                    receiver.MailBox(mail);
+                }
             } else {
                 if (isHold) {
                     eventMailList.add(mail);
