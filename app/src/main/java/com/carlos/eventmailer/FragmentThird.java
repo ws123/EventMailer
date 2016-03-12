@@ -29,9 +29,15 @@ public class FragmentThird extends Fragment implements IEventReceiver {
     }
 
     @Override
-    public void onDestroyView() {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        EventMailer.getInstance().register(this);
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onDestroy() {
         EventMailer.getInstance().unregisterReceiver(this);
-        super.onDestroyView();
+        super.onDestroy();
     }
 
     @Override
