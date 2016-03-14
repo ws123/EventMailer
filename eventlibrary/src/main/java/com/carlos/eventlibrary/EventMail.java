@@ -1,7 +1,6 @@
 package com.carlos.eventlibrary;
 
-import java.util.HashMap;
-import java.util.Map;
+import android.util.SparseArray;
 
 /**
  * Created by Administrator on 2016/1/11.
@@ -21,7 +20,7 @@ public class EventMail {
      */
     private int flag;
 
-    private Map<String, Object> map;
+    private SparseArray<Object> map;
 
     /**
      * 可以往mail里添加数据，使用hashmap来存储数据，所以请保持key的唯一性
@@ -29,9 +28,9 @@ public class EventMail {
      * @param key          存储数据的key
      * @param object_value 要发送的目标的数据对象
      */
-    public void putData(String key, Object object_value) {
+    public void putData(int key, Object object_value) {
         if (map == null) {
-            map = new HashMap<>();
+            map = new SparseArray<>();
         }
         map.put(key, object_value);
     }
@@ -42,17 +41,12 @@ public class EventMail {
      * @param key 取数据的key
      * @return 返回数据对象，有可能为null，可以事先检验是否包含这个key
      */
-    public Object getData(String key) {
+    public Object getData(int key) {
         if (map == null) {
             return null;
         }
         return map.get(key);
     }
-
-    public boolean containsData(String key) {
-        return map.containsKey(key);
-    }
-
 
     public String getAddress_className() {
         return address_className;
