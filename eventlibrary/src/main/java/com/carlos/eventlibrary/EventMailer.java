@@ -41,12 +41,6 @@ public class EventMailer {
         return missileMailer;
     }
 
-    public static void init() {
-        missileMailer = new EventMailer();
-        mails = new ConcurrentLinkedQueue<>();
-        myHandler = new MyHandler();
-    }
-
     /**
      * 初使化方法
      *
@@ -55,7 +49,9 @@ public class EventMailer {
      *                     init(false) 等价于 init()
      */
     public static void init(boolean isHoldToSend) {
-        init();
+        missileMailer = new EventMailer();
+        mails = new ConcurrentLinkedQueue<>();
+        myHandler = new MyHandler();
         if (isHoldToSend) {
             isHold = true;
             eventMailList = Collections.synchronizedList(new ArrayList<EventMail>());
@@ -90,6 +86,7 @@ public class EventMailer {
     /**
      * 发送EventMail的方法
      *
+     * @param mail 要发送的EventMail
      * @return 返回是否发送成功，如果为true，表示发送成功，否则发送失败
      */
     public boolean sendMail(EventMail mail) {
@@ -108,7 +105,7 @@ public class EventMailer {
      * 主动来询问是否有自己EventMail
      *
      * @param address_className 自己的地址名，就是EventMail的address_className
-     * @return 返回一个List<EventMail>，如果没有EvevntMail，返回null
+     * @return 返回一个List，如果没有EventMail，返回null
      */
     public List<EventMail> getMyEventMail(String address_className) {
         if (missileMailer == null) throw new EventMailerException("你没有初使化，初使化以后才可以发送EventMail");
