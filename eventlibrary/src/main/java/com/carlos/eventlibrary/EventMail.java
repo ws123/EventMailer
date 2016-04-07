@@ -25,7 +25,7 @@ public class EventMail {
     /**
      * 可以往mail里添加数据，使用hashmap来存储数据，所以请保持key的唯一性
      *
-     * @param key          存储数据的key
+     * @param key          存储数据的key,是int整型，为了更优更高的内存使用
      * @param object_value 要发送的目标的数据对象
      */
     public void putData(int key, Object object_value) {

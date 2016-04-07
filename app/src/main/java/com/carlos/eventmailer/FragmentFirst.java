@@ -59,13 +59,13 @@ public class FragmentFirst extends Fragment implements IEventReceiver, View.OnCl
             case R.id.button_two:
                 EventMail evnetMail2 = new EventMail();
                 evnetMail2.setAddress_className(FragmentSecond.class.getName());
-                evnetMail2.putData(FragmentSecond.class.getName(), "这个是从UI线程发送");
+                evnetMail2.putData(FragmentSecond.class.getName().hashCode(), "这个是从UI线程发送");
                 EventMailer.getInstance().sendMail(evnetMail2);
                 break;
             case R.id.button_three:
                 EventMail eventMail = new EventMail();
                 eventMail.setAddress_className(SecondActivity.class.getName());
-                eventMail.putData(SecondActivity.class.getName(), "hello，发自FragmentFirst");
+                eventMail.putData(SecondActivity.class.getName().hashCode(), "hello，发自FragmentFirst");
                 EventMailer.getInstance().sendMail(eventMail);
                 break;
             case R.id.button_four:
@@ -80,7 +80,7 @@ public class FragmentFirst extends Fragment implements IEventReceiver, View.OnCl
         public void run() {
             EventMail evnetMail = new EventMail();
             evnetMail.setAddress_className(FragmentSecond.class.getName());
-            evnetMail.putData(FragmentSecond.class.getName(), "这是从非Ui线程发送的");
+            evnetMail.putData(FragmentSecond.class.getName().hashCode(), "这是从非Ui线程发送的");
             EventMailer.getInstance().sendMail(evnetMail);
         }
     };

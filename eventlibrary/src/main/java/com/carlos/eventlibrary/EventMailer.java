@@ -54,7 +54,8 @@ public class EventMailer {
         myHandler = new MyHandler();
         if (isHoldToSend) {
             isHold = true;
-            eventMailList = Collections.synchronizedList(new ArrayList<EventMail>());
+            if (eventMailList == null)
+                eventMailList = Collections.synchronizedList(new ArrayList<EventMail>());
         }
     }
 
@@ -64,9 +65,7 @@ public class EventMailer {
      * @param iReceiver 要注册的IReceiver
      */
     public void register(IEventReceiver iReceiver) {
-        if (missileMailer == null) {
-            throw new EventMailerException("没有初使化EventMailer");
-        }
+        checkEventMailer();
         SoftReference<IEventReceiver> iReceiverWeakReference = new SoftReference<>(iReceiver);
         softList.put(iReceiver.getClass().getName(), iReceiverWeakReference);
     }
@@ -77,7 +76,7 @@ public class EventMailer {
      * @param iReceiver 要解除的IEventReceiver
      */
     public synchronized void unregisterReceiver(IEventReceiver iReceiver) {
-        if (missileMailer == null) throw new EventMailerException("没有初使化EventMailer");
+        checkEventMailer();
         if (softList != null && softList.containsKey(iReceiver.getClass().getName())) {
             softList.remove(iReceiver.getClass().getName());
         }
@@ -90,8 +89,7 @@ public class EventMailer {
      * @return 返回是否发送成功，如果为true，表示发送成功，否则发送失败
      */
     public boolean sendMail(EventMail mail) {
-        if (missileMailer == null) throw new EventMailerException("你没有初使化，初使化以后才可以发送EventMail");
-        if (mail == null) throw new EventMailerException("不能发送null");
+        checkEventMail(mail);
         if (Looper.myLooper() == Looper.getMainLooper()) {
             return sendAction(mail);
         } else {
@@ -102,13 +100,28 @@ public class EventMailer {
     }
 
     /**
+     * 发送EventMail，但这个EventMail不会立即发送，而是必须要接收者调用getMyEventMail或者pushMyEventMail才能收到
+     *
+     * @param eventMail 要发磅的EventMail
+     * @return 返回发送结果，为true表示正常
+     */
+    public boolean sendStaticMail(EventMail eventMail) {
+        checkEventMail(eventMail);
+        isHold = true;
+        if (eventMailList == null)
+            eventMailList = Collections.synchronizedList(new ArrayList<EventMail>());
+        eventMailList.add(eventMail);
+        return true;
+    }
+
+    /**
      * 主动来询问是否有自己EventMail
      *
      * @param address_className 自己的地址名，就是EventMail的address_className
      * @return 返回一个List，如果没有EventMail，返回null
      */
     public List<EventMail> getMyEventMail(String address_className) {
-        if (missileMailer == null) throw new EventMailerException("你没有初使化，初使化以后才可以发送EventMail");
+        checkEventMailer();
         if (!isHold) return null;
         if (eventMailList == null) return null;
         List<EventMail> eventMails = null;
@@ -134,7 +147,7 @@ public class EventMailer {
      * @param address_className 自己的地址名，就是EventMail的address_className
      */
     public void pushMyEventMail(String address_className) {
-        if (missileMailer == null) throw new EventMailerException("你没有初使化，初使化以后才可以发送EventMail");
+        checkEventMailer();
         if (!isHold) return;
         if (eventMailList == null) return;
         List<EventMail> eventMails = null;
@@ -151,9 +164,6 @@ public class EventMailer {
     }
 
     private synchronized boolean sendAction(EventMail mail) {
-        if (mail.getAddress_className() == null) {
-            throw new EventMailerException("请注明要发送给谁，className不能为空");
-        }
         if (softList != null) {
             if (softList.containsKey(mail.getAddress_className())) {
                 IEventReceiver receiver = softList.get(mail.getAddress_className()).get();
@@ -180,5 +190,27 @@ public class EventMailer {
                 EventMailer.getInstance().sendMail(mails.poll());
             }
         }
+    }
+
+    /**
+     * 检查EventMail是否有错
+     *
+     * @param eventMail 要检查的EventMail
+     * @return 返回true的时候表示没有错误
+     */
+    private boolean checkEventMail(EventMail eventMail) {
+        checkEventMailer();
+        if (eventMail == null) throw new EventMailerException("不能发送null");
+        if (eventMail.getAddress_className() == null) {
+            throw new EventMailerException("请注明要发送给谁，className不能为空");
+        }
+        return true;
+    }
+
+    /**
+     * 检查EventMailer是否被初使化
+     */
+    private void checkEventMailer() {
+        if (missileMailer == null) throw new EventMailerException("你没有初使化，初使化以后才可以发送EventMail");
     }
 }

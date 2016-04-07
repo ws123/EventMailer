@@ -37,6 +37,6 @@ public class FragmentSecond extends Fragment implements IEventReceiver {
 
     @Override
     public void MailBox(EventMail mail) {
-        textView.setText(((String) mail.getData(FragmentSecond.class.getName())));
+        textView.setText(((String) mail.getData(FragmentSecond.class.getName().hashCode())));
     }
 }

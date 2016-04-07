@@ -30,7 +30,7 @@ public class SecondActivity extends AppCompatActivity implements IEventReceiver 
                 if (eventMails == null) return;
                 textView.setText("这是主动从EventMailer那里拿的数据");
                 for (EventMail eventMail : eventMails) {
-                    textView.setText(textView.getText() + "\n" + eventMail.getData(SecondActivity.class.getName()));
+                    textView.setText(textView.getText() + "\n" + eventMail.getData(SecondActivity.class.getName().hashCode()));
                 }
             }
         });
@@ -51,6 +51,6 @@ public class SecondActivity extends AppCompatActivity implements IEventReceiver 
 
     @Override
     public void MailBox(EventMail mail) {
-        textView.setText(textView.getText() + "\n" + mail.getData(SecondActivity.class.getName()));
+        textView.setText(textView.getText() + "\n" + mail.getData(SecondActivity.class.getName().hashCode()));
     }
 }
