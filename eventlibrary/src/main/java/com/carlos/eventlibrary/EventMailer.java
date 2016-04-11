@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
-import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class EventMailer {
     private static EventMailer missileMailer;
-    private Map<String, SoftReference<IEventReceiver>> softList;
+    private Map<String, WeakReference<IEventReceiver>> softList;
     private static MyHandler myHandler;
     private static Queue<EventMail> mails;
     private static boolean isHold;
@@ -29,7 +29,7 @@ public class EventMailer {
      * 私有构造方法
      */
     private EventMailer() {
-        softList = Collections.synchronizedMap(new HashMap<String, SoftReference<IEventReceiver>>());
+        softList = Collections.synchronizedMap(new HashMap<String, WeakReference<IEventReceiver>>());
     }
 
     /**
@@ -66,7 +66,7 @@ public class EventMailer {
      */
     public void register(IEventReceiver iReceiver) {
         checkEventMailer();
-        SoftReference<IEventReceiver> iReceiverWeakReference = new SoftReference<>(iReceiver);
+        WeakReference<IEventReceiver> iReceiverWeakReference = new WeakReference<>(iReceiver);
         softList.put(iReceiver.getClass().getName(), iReceiverWeakReference);
     }
 

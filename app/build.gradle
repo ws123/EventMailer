@@ -17,6 +17,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        encoding "UTF-8"
+    }
 }
 
 dependencies {
@@ -26,6 +29,12 @@ dependencies {
     compile 'com.android.support:design:23.2.0'
     compile project(':eventlibrary')
 }
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
+task androidJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    allprojects {
+        tasks.withType(Javadoc) {
+            options.encoding = "UTF-8"
+        }
+    }
 }
