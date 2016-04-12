@@ -14,7 +14,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * Created by Administrator on 2016/1/11.
+ * Created by carlos on 2016/1/11.
  * 事件机制中的传递分发者
  */
 public class EventMailer {
@@ -107,6 +107,7 @@ public class EventMailer {
      */
     public boolean sendStaticMail(EventMail eventMail) {
         checkEventMail(eventMail);
+        if (!EventUtil.interfaceCheck(eventMail)) return false;
         isHold = true;
         if (eventMailList == null)
             eventMailList = Collections.synchronizedList(new ArrayList<EventMail>());
