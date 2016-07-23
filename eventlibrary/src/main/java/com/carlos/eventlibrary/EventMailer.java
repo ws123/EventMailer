@@ -88,7 +88,7 @@ public class EventMailer {
      * @param mail 要发送的EventMail
      * @return 返回是否发送成功，如果为true，表示发送成功，否则发送失败
      */
-    public boolean sendMail(EventMail mail) {
+    public synchronized boolean sendMail(EventMail mail) {
         checkEventMail(mail);
         if (Looper.myLooper() == Looper.getMainLooper()) {
             return sendAction(mail);
@@ -105,7 +105,7 @@ public class EventMailer {
      * @param eventMail 要发磅的EventMail
      * @return 返回发送结果，为true表示正常
      */
-    public boolean sendStaticMail(EventMail eventMail) {
+    public synchronized boolean sendStaticMail(EventMail eventMail) {
         checkEventMail(eventMail);
         if (!EventUtil.interfaceCheck(eventMail)) return false;
         isHold = true;
@@ -121,7 +121,7 @@ public class EventMailer {
      * @param address_className 自己的地址名，就是EventMail的address_className
      * @return 返回一个List，如果没有EventMail，返回null
      */
-    public List<EventMail> getMyEventMail(String address_className) {
+    public synchronized List<EventMail> getMyEventMail(String address_className) {
         checkEventMailer();
         if (!isHold) return null;
         if (eventMailList == null) return null;
@@ -147,7 +147,7 @@ public class EventMailer {
      *
      * @param address_className 自己的地址名，就是EventMail的address_className
      */
-    public void pushMyEventMail(String address_className) {
+    public synchronized void pushMyEventMail(String address_className) {
         checkEventMailer();
         if (!isHold) return;
         if (eventMailList == null) return;
