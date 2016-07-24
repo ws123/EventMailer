@@ -121,7 +121,7 @@ public class EventMailer {
      * @param address_className 自己的地址名，就是EventMail的address_className
      * @return 返回一个List，如果没有EventMail，返回null
      */
-    public synchronized List<EventMail> getMyEventMail(String address_className) {
+    public List<EventMail> getMyEventMail(String address_className) {
         checkEventMailer();
         if (!isHold) return null;
         if (eventMailList == null) return null;
@@ -147,7 +147,7 @@ public class EventMailer {
      *
      * @param address_className 自己的地址名，就是EventMail的address_className
      */
-    public synchronized void pushMyEventMail(String address_className) {
+    public void pushMyEventMail(String address_className) {
         checkEventMailer();
         if (!isHold) return;
         if (eventMailList == null) return;
@@ -157,11 +157,15 @@ public class EventMailer {
                 if (eventMails == null) {
                     eventMails = new ArrayList<>();
                 }
-                sendMail(eventMail);
                 eventMails.add(eventMail);
             }
         }
-        if (eventMails != null) eventMailList.removeAll(eventMails);
+        if (eventMails != null) {
+            eventMailList.removeAll(eventMails);
+            for (EventMail eventMail : eventMails) {
+                sendMail(eventMail);
+            }
+        }
     }
 
     private synchronized boolean sendAction(EventMail mail) {
