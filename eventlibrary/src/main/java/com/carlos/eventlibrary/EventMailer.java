@@ -100,6 +100,28 @@ public class EventMailer {
     }
 
     /**
+     * 发送一个只有目标类的空的事件
+     * @param address 目标类的类名
+     */
+    public void sendMail(String address){
+        EventMail eventMail = new EventMail();
+        eventMail.setAddress_className(address);
+        sendMail(eventMail);
+    }
+
+    /**
+     * 发送一个不包含目标类的事件
+     * @param address 目标类的类名
+     * @param flag 事件的标记
+     */
+    public void sendMail(String address,int flag){
+        EventMail eventMail = new EventMail();
+        eventMail.setAddress_className(address);
+        eventMail.setFlag(flag);
+        sendMail(eventMail);
+    }
+
+    /**
      * 发送EventMail，但这个EventMail不会立即发送，而是必须要接收者调用getMyEventMail或者pushMyEventMail才能收到
      *
      * @param eventMail 要发磅的EventMail
