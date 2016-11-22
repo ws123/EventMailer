@@ -1,6 +1,10 @@
 package com.carlos.eventlibrary;
 
+import android.text.TextUtils;
 import android.util.SparseArray;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/1/11.
@@ -14,6 +18,12 @@ public class EventMail {
      * this.getClass().getName()
      */
     private String address_className;
+    /**
+     * 事件mail的抄送地址
+     * 发送的EventMail，可以添加到抄送
+     * 抄送地址存储在这个List里面
+     */
+    private List<String> duplicateClassNameList;
 
     /**
      * 一个可以自定义的标记符
@@ -62,5 +72,21 @@ public class EventMail {
 
     public void setFlag(int flag) {
         this.flag = flag;
+    }
+
+    /**
+     * @param duplicateClassName 添加一个抄送的类名
+     */
+    public void addDuplicate(String duplicateClassName) {
+        if (duplicateClassName == null || TextUtils.isEmpty(duplicateClassName))
+            throw new EventMailerException("抄送类名不能为null或者为空");
+        if (duplicateClassNameList == null) {
+            duplicateClassNameList = new ArrayList<>(2);
+        }
+        duplicateClassNameList.add(duplicateClassName);
+    }
+
+    List<String> getDuplicateClassNameList() {
+        return duplicateClassNameList;
     }
 }

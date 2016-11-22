@@ -46,6 +46,9 @@ public class SecondActivity extends AppCompatActivity implements IEventReceiver 
     @Override
     protected void onDestroy() {
         EventMailer.getInstance().unregisterReceiver(this);
+        EventMail eventMail = new EventMail();
+        eventMail.setAddress_className(FragmentFirst.class.getName());
+        EventMailer.getInstance().sendMail(eventMail);
         super.onDestroy();
     }
 

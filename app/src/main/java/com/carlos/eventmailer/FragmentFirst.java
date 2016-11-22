@@ -39,8 +39,15 @@ public class FragmentFirst extends Fragment implements IEventReceiver, View.OnCl
     }
 
     @Override
-    public void MailBox(EventMail mail) {
+    public void onResume() {
+        EventMailer.getInstance().pushMyEventMail(FragmentFirst.class.getName());
+        System.out.println("这里要求推送事件邮件");
+        super.onResume();
+    }
 
+    @Override
+    public void MailBox(EventMail mail) {
+        System.out.println("这里接收到一个事件邮件");
     }
 
     @Override
@@ -60,6 +67,7 @@ public class FragmentFirst extends Fragment implements IEventReceiver, View.OnCl
                 EventMail evnetMail2 = new EventMail();
                 evnetMail2.setAddress_className(FragmentSecond.class.getName());
                 evnetMail2.putData(FragmentSecond.class.getName().hashCode(), "这个是从UI线程发送");
+                evnetMail2.addDuplicate(FragmentThird.class.getName());
                 EventMailer.getInstance().sendMail(evnetMail2);
                 break;
             case R.id.button_three:

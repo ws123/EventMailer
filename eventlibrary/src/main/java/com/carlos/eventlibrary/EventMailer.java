@@ -101,9 +101,10 @@ public class EventMailer {
 
     /**
      * 发送一个只有目标类的空的事件
+     *
      * @param address 目标类的类名
      */
-    public void sendMail(String address){
+    public void sendMail(String address) {
         EventMail eventMail = new EventMail();
         eventMail.setAddress_className(address);
         sendMail(eventMail);
@@ -111,10 +112,11 @@ public class EventMailer {
 
     /**
      * 发送一个不包含目标类的事件
+     *
      * @param address 目标类的类名
-     * @param flag 事件的标记
+     * @param flag    事件的标记
      */
-    public void sendMail(String address,int flag){
+    public void sendMail(String address, int flag) {
         EventMail eventMail = new EventMail();
         eventMail.setAddress_className(address);
         eventMail.setFlag(flag);
@@ -200,6 +202,14 @@ public class EventMailer {
                     }
                 } else {
                     receiver.MailBox(mail);
+                    if (mail.getDuplicateClassNameList() != null) {
+                        for (String address : mail.getDuplicateClassNameList()) {
+                            if (softList.containsKey(address)) {
+                                IEventReceiver receiverDuplicate = softList.get(address).get();
+                                receiverDuplicate.MailBox(mail);
+                            }
+                        }
+                    }
                 }
             } else {
                 if (isHold) {
@@ -210,7 +220,7 @@ public class EventMailer {
         return true;
     }
 
-    static class MyHandler extends Handler {
+    private static class MyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             while (!mails.isEmpty()) {

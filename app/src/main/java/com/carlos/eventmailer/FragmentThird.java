@@ -42,6 +42,7 @@ public class FragmentThird extends Fragment implements IEventReceiver {
 
     @Override
     public void MailBox(EventMail mail) {
+        System.out.println("这里有接收到事件");
         textView.setText(((String) mail.getData(FragmentThird.class.getName().hashCode())));
     }
 }
