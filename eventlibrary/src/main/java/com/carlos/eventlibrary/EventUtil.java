@@ -5,7 +5,7 @@ package com.carlos.eventlibrary;
  * Created by carlos on 2016/3/12.
  * 工具类
  */
-public class EventUtil {
+class EventUtil {
 
     /**
      * 检测EventMail要接收者是否实现了IEventReceiver接口
@@ -13,7 +13,7 @@ public class EventUtil {
      * @param eventMail 要检查的EventMail
      * @return 返回true，则表示EventMail可以发送，否则不可以
      */
-    public static boolean interfaceCheck(EventMail eventMail) {
+    static boolean interfaceCheck(EventMail eventMail) {
         try {
             Class<?> member = Class.forName(eventMail.getAddress_className());
             for (Class<?> oneInterface : member.getInterfaces()) {

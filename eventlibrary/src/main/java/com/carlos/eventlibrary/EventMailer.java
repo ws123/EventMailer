@@ -24,6 +24,10 @@ public class EventMailer {
     private static Queue<EventMail> mails;
     private static boolean isHold;
     private static List<EventMail> eventMailList;
+    /**
+     * 所能存储的，静态邮件的数量
+     */
+    private static int staticLenght;
 
     /**
      * 私有构造方法
@@ -47,6 +51,7 @@ public class EventMailer {
      * @param isHoldToSend 在发送给某个界面EventMail的时候,如果那个界面当前不存在，是否存储信息，直到界面出现主动来拿
      *                     即使存储的有信息，但APP如果关闭了，所有的信息都会清空
      *                     init(false) 等价于 init()
+     *                     只能存储一封静态邮件，后者会顶掉前者
      */
     public static void init(boolean isHoldToSend) {
         missileMailer = new EventMailer();
@@ -54,8 +59,29 @@ public class EventMailer {
         myHandler = new MyHandler();
         if (isHoldToSend) {
             isHold = true;
+            staticLenght = 1;
             if (eventMailList == null)
-                eventMailList = Collections.synchronizedList(new ArrayList<EventMail>());
+                eventMailList = Collections.synchronizedList(new ArrayList<EventMail>(staticLenght));
+        }
+    }
+
+    /**
+     * 初使化方法
+     *
+     * @param isHoldToSend 在发送给某个界面EventMail的时候,如果那个界面当前不存在，是否存储信息，直到界面出现主动来拿
+     *                     即使存储的有信息，但APP如果关闭了，所有的信息都会清空
+     *                     init(false) 等价于 init()
+     * @param staticLength 可以存储静态邮件的数量
+     */
+    public static void init(boolean isHoldToSend, int staticLength) {
+        missileMailer = new EventMailer();
+        mails = new ConcurrentLinkedQueue<>();
+        myHandler = new MyHandler();
+        if (isHoldToSend) {
+            isHold = true;
+            EventMailer.staticLenght = staticLength;
+            if (eventMailList == null)
+                eventMailList = Collections.synchronizedList(new ArrayList<EventMail>(EventMailer.staticLenght));
         }
     }
 
@@ -131,10 +157,12 @@ public class EventMailer {
      */
     public synchronized boolean sendStaticMail(EventMail eventMail) {
         checkEventMail(eventMail);
-        if (!EventUtil.interfaceCheck(eventMail)) return false;
         isHold = true;
         if (eventMailList == null)
-            eventMailList = Collections.synchronizedList(new ArrayList<EventMail>());
+            eventMailList = Collections.synchronizedList(new ArrayList<EventMail>(staticLenght));
+        while (eventMailList.size() >= staticLenght) {
+            eventMailList.remove(0);
+        }
         eventMailList.add(eventMail);
         return true;
     }
@@ -198,6 +226,9 @@ public class EventMailer {
                 IEventReceiver receiver = softList.get(mail.getAddress_className()).get();
                 if (receiver == null) {
                     if (isHold) {
+                        while (eventMailList.size() >= staticLenght) {
+                            eventMailList.remove(0);
+                        }
                         eventMailList.add(mail);
                     }
                 } else {
@@ -213,6 +244,9 @@ public class EventMailer {
                 }
             } else {
                 if (isHold) {
+                    while (eventMailList.size() >= staticLenght) {
+                        eventMailList.remove(0);
+                    }
                     eventMailList.add(mail);
                 }
             }
