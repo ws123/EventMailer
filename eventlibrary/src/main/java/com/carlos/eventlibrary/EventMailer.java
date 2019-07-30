@@ -91,9 +91,15 @@ public class EventMailer {
      * @param iReceiver 要注册的IReceiver
      */
     public void register(IEventReceiver iReceiver) {
+        if(softList.containsKey(iReceiver.getClass().getName())){
+            EventUtil.writeLog("已经存在" + "  " + iReceiver.getClass().getName() + "   " + softList.get(iReceiver.getClass().getName()).hashCode());
+        }
         checkEventMailer();
         WeakReference<IEventReceiver> iReceiverWeakReference = new WeakReference<>(iReceiver);
         softList.put(iReceiver.getClass().getName(), iReceiverWeakReference);
+        if(softList.containsKey(iReceiver.getClass().getName())){
+            EventUtil.writeLog("存储以后" + "  " + iReceiver.getClass().getName() + "   " + softList.get(iReceiver.getClass().getName()).hashCode());
+        }
     }
 
     /**
