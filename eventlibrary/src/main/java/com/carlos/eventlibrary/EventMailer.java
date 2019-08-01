@@ -229,8 +229,11 @@ public class EventMailer {
     private synchronized boolean sendAction(EventMail mail) {
         if (softList != null) {
             if (softList.containsKey(mail.getAddress_className())) {
+                EventUtil.writeLog("这里发送邮件" + "   " + mail.getAddress_className());
+                EventUtil.writeLog("存储的收件人" + "   " + softList.get(mail.getAddress_className()).hashCode());
                 IEventReceiver receiver = softList.get(mail.getAddress_className()).get();
                 if (receiver == null) {
+                    EventUtil.writeLog("收件人已经被GC回收" + "   " + mail.getAddress_className());
                     if (isHold) {
                         while (eventMailList.size() >= staticLenght) {
                             eventMailList.remove(0);
