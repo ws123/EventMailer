@@ -27,7 +27,7 @@ public class EventMailer {
     /**
      * 所能存储的，静态邮件的数量
      */
-    private static int staticLenght;
+    private static int staticLength;
 
     /**
      * 私有构造方法
@@ -59,9 +59,9 @@ public class EventMailer {
         myHandler = new MyHandler();
         if (isHoldToSend) {
             isHold = true;
-            staticLenght = 1;
+            staticLength = 1;
             if (eventMailList == null)
-                eventMailList = Collections.synchronizedList(new ArrayList<EventMail>(staticLenght));
+                eventMailList = Collections.synchronizedList(new ArrayList<EventMail>(staticLength));
         }
     }
 
@@ -79,9 +79,9 @@ public class EventMailer {
         myHandler = new MyHandler();
         if (isHoldToSend) {
             isHold = true;
-            EventMailer.staticLenght = staticLength;
+            EventMailer.staticLength = staticLength;
             if (eventMailList == null)
-                eventMailList = Collections.synchronizedList(new ArrayList<EventMail>(EventMailer.staticLenght));
+                eventMailList = Collections.synchronizedList(new ArrayList<EventMail>(EventMailer.staticLength));
         }
     }
 
@@ -165,8 +165,8 @@ public class EventMailer {
         checkEventMail(eventMail);
         isHold = true;
         if (eventMailList == null)
-            eventMailList = Collections.synchronizedList(new ArrayList<EventMail>(staticLenght));
-        while (eventMailList.size() >= staticLenght) {
+            eventMailList = Collections.synchronizedList(new ArrayList<EventMail>(staticLength));
+        while (eventMailList.size() >= staticLength) {
             eventMailList.remove(0);
         }
         eventMailList.add(eventMail);
@@ -235,7 +235,7 @@ public class EventMailer {
                 if (receiver == null) {
                     EventUtil.writeLog("收件人已经被GC回收" + "   " + mail.getAddress_className());
                     if (isHold) {
-                        while (eventMailList.size() >= staticLenght) {
+                        while (eventMailList.size() >= staticLength) {
                             eventMailList.remove(0);
                         }
                         eventMailList.add(mail);
@@ -253,7 +253,7 @@ public class EventMailer {
                 }
             } else {
                 if (isHold) {
-                    while (eventMailList.size() >= staticLenght) {
+                    while (eventMailList.size() >= staticLength) {
                         eventMailList.remove(0);
                     }
                     eventMailList.add(mail);
