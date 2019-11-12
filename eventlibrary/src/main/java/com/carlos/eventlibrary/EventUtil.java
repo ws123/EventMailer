@@ -42,28 +42,28 @@ class EventUtil {
 
 
     public static void writeLog(String string) {
-        if (Environment.getExternalStorageState().equals(
-                Environment.MEDIA_MOUNTED)) {
-            File file = new File(Environment.getExternalStorageDirectory().getPath(), "aidezuobiao.txt");
-            FileWriter fileWriter = null;
-            try {
-                if (!file.exists()) {
-                    file.createNewFile();
-                }
-                fileWriter = new FileWriter(file, true);
-                fileWriter.write("\n" + getFormatTime("MM月dd日 HH:mm:ss",
-                        System.currentTimeMillis()) + "  " + string);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (fileWriter != null) {
-                    try {
-                        fileWriter.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
+//        if (Environment.getExternalStorageState().equals(
+//                Environment.MEDIA_MOUNTED)) {
+//            File file = new File(Environment.getExternalStorageDirectory().getPath(), "eventMailer");
+//            FileWriter fileWriter = null;
+//            try {
+//                if (!file.exists()) {
+//                    file.createNewFile();
+//                }
+//                fileWriter = new FileWriter(file, true);
+//                fileWriter.write("\n" + getFormatTime("MM月dd日 HH:mm:ss",
+//                        System.currentTimeMillis()) + "  " + string);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } finally {
+//                if (fileWriter != null) {
+//                    try {
+//                        fileWriter.close();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
     }
 }
